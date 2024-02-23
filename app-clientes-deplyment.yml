@@ -1,0 +1,38 @@
+# kubectl apply -f app-clientes-deplyment.yml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-clientes # etiqueta del deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-clientes
+  template:
+    metadata:
+      labels:
+        app: app-clientes
+    spec:
+      containers:
+        - name: app-clientes
+          image: darkenblue952518/app-clientes
+          ports:
+            # puerto del contenedor
+            - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-clientes-service
+spec:
+  type: ClusterIP
+  selector:
+    app: app-clientes
+  ports:
+    - protocol: TCP
+      # puerto del servicio
+      port: 8080
+      # puerto del contenedor
+      targetPort: 8080

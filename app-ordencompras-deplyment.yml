@@ -1,0 +1,43 @@
+# kubectl apply -f app-ordencompras-deplyment.yml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-ordencompras # etiqueta del deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-ordencompras
+  template:
+    metadata:
+      labels:
+        app: app-ordencompras
+    spec:
+      containers:
+        - name: app-ordencompras
+          image: darkenblue952518/app-ordencompras
+          env:
+            - name: APP_CLIENTES_URL
+              value: http://app-clientes-service:6060
+            - name: APP_PRODUCTOS_URL
+              value: http://app-productos-service:9090
+          ports:
+            # puerto del contenedor
+            - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-ordencompras-service
+spec:
+  type: ClusterIP
+  selector:
+    app: app-ordencompras
+  ports:
+    - protocol: TCP
+      # puerto del servicio
+      port: 8080
+      # puerto del contenedor
+      targetPort: 8080
